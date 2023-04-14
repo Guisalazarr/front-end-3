@@ -13,6 +13,7 @@ import ErrandsType from '../types/ErrandsType';
 import { removeErrands } from '../store/modules/errandsSlice';
 import { useAppDispatch } from '../store/hooks';
 import { useNavigate } from 'react-router-dom';
+import DialogConfirm from './DaialogConfirm';
 
 interface ListErrandsProps {
   data: ErrandsType[];
@@ -22,16 +23,18 @@ const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [dataLocal, setDataLocal] = useState<ErrandsType[]>([]);
+  const [idDelete, setIdDelete] = useState<number>(0);
 
   const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
 
   useEffect(() => {
     setDataLocal([...data]);
   }, [data]);
 
-  const handleDelete = (itemDelete: ErrandsType) => {
-    dispatch(removeErrands(itemDelete.id));
-    setOpenAlert(true);
+  const confirmDelete = (itemDelete: ErrandsType) => {
+    setIdDelete(itemDelete.id);
+    setOpenDialog(true);
   };
 
   const handleCloseAlert = () => {
@@ -40,6 +43,16 @@ const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
 
   const handleEdit = (itemEdit: ErrandsType) => {
     navigate(`/errands/${itemEdit.id}`);
+  };
+
+  const closeDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleDelete = () => {
+    dispatch(removeErrands(idDelete));
+    setOpenDialog(false);
+    setOpenAlert(true);
   };
 
   const listMemo = useMemo(() => {
@@ -60,7 +73,7 @@ const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
                   <EditIcon />
                 </IconButton>
 
-                <IconButton aria-label="comment" onClick={() => handleDelete(item)}>
+                <IconButton aria-label="comment" onClick={() => confirmDelete(item)}>
                   <DeleteIcon />
                 </IconButton>
               </>
@@ -93,6 +106,13 @@ const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
           Recado excluído com sucesso!
         </Alert>
       </Snackbar>
+
+      <DialogConfirm
+        openDialog={openDialog}
+        actionCancel={closeDialog}
+        actionConfirm={handleDelete}
+        title="Deseja excluir este recado?"
+      />
     </>
   );
 };

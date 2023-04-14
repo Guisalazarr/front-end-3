@@ -11,6 +11,7 @@ import React from 'react';
 
 interface DialogConfirmProps {
   title: string;
+
   openDialog: boolean;
   actionCancel: () => void;
   actionConfirm: () => void;
