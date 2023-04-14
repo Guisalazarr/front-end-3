@@ -12,6 +12,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ErrandsType from '../types/ErrandsType';
 import { removeErrands } from '../store/modules/errandsSlice';
 import { useAppDispatch } from '../store/hooks';
+import { useNavigate } from 'react-router-dom';
 
 interface ListErrandsProps {
   data: ErrandsType[];
@@ -19,6 +20,7 @@ interface ListErrandsProps {
 
 const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [dataLocal, setDataLocal] = useState<ErrandsType[]>([]);
 
   const [openAlert, setOpenAlert] = useState<boolean>(false);
@@ -36,16 +38,25 @@ const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
     setOpenAlert(false);
   };
 
+  const handleEdit = (itemEdit: ErrandsType) => {
+    navigate(`/errands/${itemEdit.id}`);
+  };
+
   const listMemo = useMemo(() => {
     return dataLocal.map((item, index) => {
       return (
         <React.Fragment key={item.id}>
           <ListItem
-            sx={{ width: '100%', bgcolor: 'background.paper' }}
+            sx={{ maxWidth: '100%', bgcolor: 'background.paper', padding: '1rem' }}
             disableGutters
             secondaryAction={
               <>
-                <IconButton edge="end" aria-label="delete" sx={{ marginRight: '10px' }}>
+                <IconButton
+                  edge="end"
+                  aria-label="delete"
+                  sx={{ marginRight: '10px' }}
+                  onClick={() => handleEdit(item)}
+                >
                   <EditIcon />
                 </IconButton>
 
@@ -67,7 +78,7 @@ const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
               }
             />
           </ListItem>
-          <Divider variant="inset" component="li" />
+          <Divider />
         </React.Fragment>
       );
     });
@@ -75,13 +86,11 @@ const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
 
   return (
     <>
-      <List sx={{ bgcolor: 'background.paper' }}>
-        {dataLocal.length ? listMemo : <Typography variant="body1">Nenhum recado cadastrado.</Typography>}
-      </List>
+      <List>{dataLocal.length ? listMemo : <Typography variant="body1">Nenhum recado cadastrado.</Typography>}</List>
 
-      <Snackbar open={openAlert} onClose={handleCloseAlert} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+      <Snackbar open={openAlert} onClose={handleCloseAlert} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
         <Alert severity="success" variant="filled">
-          Recado excluído sucesso!
+          Recado excluído com sucesso!
         </Alert>
       </Snackbar>
     </>

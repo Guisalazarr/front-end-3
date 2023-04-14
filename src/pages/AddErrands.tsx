@@ -1,25 +1,47 @@
-import { Alert, Button, Grid, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, Grid, Paper, Snackbar, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import generateId from '../utils/generateId';
-import ErrandsType from '../types/ErrandsType';
 import TitlePage from '../components/TitlePage';
-import { useAppDispatch } from '../store/hooks';
-import { addErrands } from '../store/modules/errandsSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { addErrands, selectById, updateErrands } from '../store/modules/errandsSlice';
+import { useNavigate, useParams } from 'react-router-dom';
+
+const alignCenter = {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center'
+};
 
 const AddErrands: React.FC = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const errandsRedux = useAppSelector(state => selectById(state, id || ''));
 
   const [title, setTitle] = useState<string>('');
   const [titleError, setTitleError] = useState<boolean>(false);
-  const [valid, setValid] = useState<boolean>(false);
 
   const [description, setDescription] = useState<string>('');
   const [descriptionError, setDescriptionError] = useState<boolean>(false);
 
   const [open, setOpen] = useState<boolean>(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [valid, setValid] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (errandsRedux) {
+      setTitle(errandsRedux.title);
+      setDescription(errandsRedux.description);
+      setIsEdit(true);
+    }
+  }, [errandsRedux]);
 
   useEffect(() => {
     if (title.length) {
+      if (isEdit) {
+        setValid(true);
+      }
       if (title.length < 3) {
         setTitleError(true);
         setValid(true);
@@ -44,15 +66,6 @@ const AddErrands: React.FC = () => {
     }
   }, [description]);
 
-  const handleAdd = () => {
-    const errands: ErrandsType = { id: generateId(), description, title };
-
-    dispatch(addErrands(errands));
-    setOpen(true);
-
-    handleClear();
-  };
-
   const handleClear = () => {
     setTitle('');
     setDescription('');
@@ -62,54 +75,90 @@ const AddErrands: React.FC = () => {
     setOpen(false);
   };
 
+  const handleEdit = () => {
+    if (id) {
+      dispatch(updateErrands({ id, changes: { title, description } }));
+      navigate('/home');
+      setIsEdit(false);
+    }
+  };
+
+  const handleAdd = () => {
+    if (!isEdit) {
+      dispatch(addErrands({ id: generateId(), description, title }));
+      setOpen(true);
+      navigate('/home');
+    } else {
+      handleEdit();
+    }
+    handleClear();
+  };
   return (
     <>
-      <Grid container spacing={4}>
-        <TitlePage title="Adicione um novo recado" />
-        <Grid item xs={12}>
-          <TextField
-            value={title}
-            error={titleError}
-            helperText={titleError ? 'Digite um título válido, no mínimo 3 caracteres.' : ''}
-            onChange={event => setTitle(event.target.value)}
-            fullWidth
-            id="title"
-            label="Digite um título"
-            variant="outlined"
-            color="secondary"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            value={description}
-            error={descriptionError}
-            helperText={descriptionError ? 'Digite uma descrição válida, no mínimo 5 caracteres.' : ''}
-            onChange={event => setDescription(event.target.value)}
-            fullWidth
-            id="description"
-            label="Digite uma descrição"
-            variant="outlined"
-            color="secondary"
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <Button fullWidth onClick={handleClear} variant="outlined" sx={{ height: '50px' }}>
-            Limpar
-          </Button>
-        </Grid>
-        <Grid item xs={6}>
-          <Button
-            onClick={handleAdd}
-            disabled={titleError || descriptionError || !valid}
-            fullWidth
-            variant="contained"
-            sx={{ height: '50px' }}
-          >
-            Cadastrar
-          </Button>
-        </Grid>
+      <Grid container spacing={4} sx={{ ...alignCenter, marginTop: '2rem' }}>
+        <TitlePage title={isEdit ? 'Edite o recado' : 'Cadastre um novo recado'} />
+
+        <Paper
+          sx={{
+            minWidth: '500px',
+            padding: '1rem',
+            mt: '20px'
+          }}
+        >
+          <Grid item xs={12}>
+            <TextField
+              sx={{ my: '10px' }}
+              value={title}
+              error={titleError}
+              helperText={titleError ? 'Digite um título válido, no mínimo 3 caracteres.' : ''}
+              onChange={event => setTitle(event.target.value)}
+              fullWidth
+              id="title"
+              label="Digite um título"
+              variant="outlined"
+              color="secondary"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              sx={{ my: '10px' }}
+              value={description}
+              error={descriptionError}
+              helperText={descriptionError ? 'Digite uma descrição válida, no mínimo 5 caracteres.' : ''}
+              onChange={event => setDescription(event.target.value)}
+              fullWidth
+              id="description"
+              label="Digite uma descrição"
+              variant="outlined"
+              color="secondary"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              onClick={handleAdd}
+              disabled={titleError || descriptionError || !valid}
+              fullWidth
+              variant="contained"
+              sx={{ height: '50px', my: '10px' }}
+            >
+              {isEdit ? 'Editar' : 'Cadastrar'}
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              fullWidth
+              onClick={handleClear}
+              color="secondary"
+              variant="outlined"
+              sx={{ height: '50px', my: '10px' }}
+            >
+              Limpar
+            </Button>
+          </Grid>
+        </Paper>
       </Grid>
-      <Snackbar open={open} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+
+      <Snackbar open={open} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
         <Alert severity="success" variant="filled">
           Recado cadastrado com sucesso!
         </Alert>

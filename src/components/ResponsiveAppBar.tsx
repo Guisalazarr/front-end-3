@@ -65,7 +65,6 @@ function ResponsiveAppBar() {
                 vertical: 'bottom',
                 horizontal: 'left'
               }}
-              keepMounted
               transformOrigin={{
                 vertical: 'top',
                 horizontal: 'left'
@@ -89,7 +88,15 @@ function ResponsiveAppBar() {
               <Button
                 key={page.url}
                 onClick={() => handleCloseNavMenu(page.url)}
-                sx={{ my: 2, mr: 2, color: 'white', display: 'block' }}
+                sx={{
+                  mr: 2,
+                  display: { xs: 'none', md: 'flex' },
+
+                  fontWeight: 700,
+                  letterSpacing: '.1rem',
+                  color: 'white',
+                  textDecoration: 'none'
+                }}
               >
                 <Typography variant="h6">{page.label}</Typography>
               </Button>
