@@ -2,21 +2,26 @@ import { Alert, Button, Grid, Paper, Snackbar, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import generateId from '../utils/generateId';
 import TitlePage from '../components/TitlePage';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { addErrands, selectById, updateErrands } from '../store/modules/errandsSlice';
+
+import { addErrands, updateErrands, selectById } from '../store/modules/errandsSlice';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import AlertFeedback from '../components/AlertFeedback';
 
 const alignCenter = {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-  alignItems: 'center'
+  alignItems: 'center',
+  marginTop: '2rem'
 };
 
 const AddErrands: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+
+  const userLoggedRedux = useAppSelector(state => state.userLogged);
   const errandsRedux = useAppSelector(state => selectById(state, id || ''));
 
   const [title, setTitle] = useState<string>('');
@@ -25,9 +30,27 @@ const AddErrands: React.FC = () => {
   const [description, setDescription] = useState<string>('');
   const [descriptionError, setDescriptionError] = useState<boolean>(false);
 
-  const [open, setOpen] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(false);
+
+  const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const [msg, setMsg] = useState<string>('');
+  const [feedBack, setFeedback] = useState<'success' | 'error'>('success');
+
+  useEffect(() => {
+    if (!userLoggedRedux.email) {
+      if (id) {
+        setIsEdit(true);
+      }
+      setFeedback('error');
+      setMsg('Nenhum usuário logado!');
+      setOpenAlert(true);
+
+      setTimeout(() => {
+        navigate('/login');
+      }, 1000);
+    }
+  }, [userLoggedRedux]);
 
   useEffect(() => {
     if (errandsRedux) {
@@ -71,31 +94,36 @@ const AddErrands: React.FC = () => {
     setDescription('');
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const handleEdit = () => {
     if (id) {
       dispatch(updateErrands({ id, changes: { title, description } }));
-      navigate('/home');
+      handleClear();
+      setFeedback('success');
+      setMsg('Recado editado com sucesso!');
+      setOpenAlert(true);
+
       setIsEdit(false);
     }
   };
 
   const handleAdd = () => {
-    if (!isEdit) {
-      dispatch(addErrands({ id: generateId(), description, title }));
-      setOpen(true);
-      navigate('/home');
-    } else {
+    if (isEdit) {
       handleEdit();
+    } else {
+      dispatch(addErrands({ id: generateId(), title, description }));
+
+      setFeedback('success');
+      setMsg('Recado cadastrado com sucesso!');
+      setOpenAlert(true);
     }
-    handleClear();
+    setTimeout(() => {
+      navigate(`/home/${userLoggedRedux.email}`);
+    }, 1000);
   };
+
   return (
     <>
-      <Grid container spacing={4} sx={{ ...alignCenter, marginTop: '2rem' }}>
+      <Grid container spacing={4} sx={{ ...alignCenter }}>
         <TitlePage title={isEdit ? 'Edite o recado' : 'Cadastre um novo recado'} />
 
         <Paper
@@ -156,13 +184,8 @@ const AddErrands: React.FC = () => {
             </Button>
           </Grid>
         </Paper>
+        <AlertFeedback open={openAlert} close={() => setOpenAlert(false)} feedback={feedBack} msg={msg} />
       </Grid>
-
-      <Snackbar open={open} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert severity="success" variant="filled">
-          Recado cadastrado com sucesso!
-        </Alert>
-      </Snackbar>
     </>
   );
 };

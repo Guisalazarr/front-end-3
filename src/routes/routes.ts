@@ -1,6 +1,6 @@
 const routes = [
-  { label: 'Recados', url: '/home' },
-  { label: 'Cadastrar', url: '/errands' },
+  { label: 'Meus Recados', url: '/home' },
+  { label: '+ Novo Recado', url: '/add-errands' },
 
 ];
 

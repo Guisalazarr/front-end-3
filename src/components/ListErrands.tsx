@@ -10,10 +10,10 @@ import { Alert, IconButton, Snackbar } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ErrandsType from '../types/ErrandsType';
-import { removeErrands } from '../store/modules/errandsSlice';
 import { useAppDispatch } from '../store/hooks';
 import { useNavigate } from 'react-router-dom';
 import DialogConfirm from './DaialogConfirm';
+import { removeErrands } from '../store/modules/errandsSlice';
 
 interface ListErrandsProps {
   data: ErrandsType[];
@@ -27,6 +27,7 @@ const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
 
   const [openAlert, setOpenAlert] = useState<boolean>(false);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [dialogItem, setdialogItem] = useState<ErrandsType>();
 
   useEffect(() => {
     setDataLocal([...data]);
@@ -35,18 +36,11 @@ const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
   const confirmDelete = (itemDelete: ErrandsType) => {
     setIdDelete(itemDelete.id);
     setOpenDialog(true);
-  };
-
-  const handleCloseAlert = () => {
-    setOpenAlert(false);
+    setdialogItem(itemDelete);
   };
 
   const handleEdit = (itemEdit: ErrandsType) => {
-    navigate(`/errands/${itemEdit.id}`);
-  };
-
-  const closeDialog = () => {
-    setOpenDialog(false);
+    navigate(`/edit-errands/${itemEdit.id}`);
   };
 
   const handleDelete = () => {
@@ -101,17 +95,23 @@ const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
     <>
       <List>{dataLocal.length ? listMemo : <Typography variant="body1">Nenhum recado cadastrado.</Typography>}</List>
 
-      <Snackbar open={openAlert} onClose={handleCloseAlert} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+      <Snackbar
+        open={openAlert}
+        onClose={() => setOpenAlert(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
         <Alert severity="success" variant="filled">
           Recado excluído com sucesso!
         </Alert>
       </Snackbar>
 
       <DialogConfirm
-        openDialog={openDialog}
-        actionCancel={closeDialog}
         actionConfirm={handleDelete}
+        actionCancel={() => setOpenDialog(false)}
         title="Deseja excluir este recado?"
+        openDialog={openDialog}
+        subtile={dialogItem ? dialogItem.title : ''}
+        description={dialogItem ? dialogItem.description : ''}
       />
     </>
   );

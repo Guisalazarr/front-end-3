@@ -11,15 +11,23 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import ExitToAppRoundedIcon from '@mui/icons-material/ExitToAppRounded';
+import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from 'react-router-dom';
 
 import routes from '../routes/routes';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import HoverNavbarStled from './HoverNavbarStyled';
+import { removeAllErrands } from '../store/modules/errandsSlice';
+import { clearUserLogged } from '../store/modules/userLoggedSlice';
 
 const settings = ['Sair'];
 
 function ResponsiveAppBar() {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const userLoggedRedux = useAppSelector(state => state.userLogged);
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -41,6 +49,8 @@ function ResponsiveAppBar() {
 
   const logout = () => {
     navigate('/login');
+    dispatch(clearUserLogged());
+    dispatch(removeAllErrands());
   };
 
   return (
@@ -85,28 +95,42 @@ function ResponsiveAppBar() {
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {routes.map(page => (
-              <Button
-                key={page.url}
-                onClick={() => handleCloseNavMenu(page.url)}
-                sx={{
-                  mr: 2,
-                  display: { xs: 'none', md: 'flex' },
-
-                  fontWeight: 700,
-                  letterSpacing: '.1rem',
-                  color: 'white',
-                  textDecoration: 'none'
-                }}
-              >
-                <Typography variant="h6">{page.label}</Typography>
+              <Button key={page.url} onClick={() => handleCloseNavMenu(`${page.url}/${userLoggedRedux.email}`)}>
+                <HoverNavbarStled>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: 700,
+                      letterSpacing: '.1rem'
+                    }}
+                  >
+                    {page.label}
+                  </Typography>
+                </HoverNavbarStled>
               </Button>
             ))}
           </Box>
+          <Typography
+            variant="h5"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+
+              fontWeight: 700,
+              letterSpacing: '.1rem',
+              color: 'black',
+              textDecoration: 'none'
+            }}
+          >
+            {userLoggedRedux.name}
+          </Typography>
           <Box sx={{ flexGrow: 0, marginRight: '10px' }}>
-            <Tooltip title="Open settings">
+            <Tooltip title="Menu">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar variant="rounded" sx={{ bgcolor: 'secondary' }}>
-                  <ExitToAppRoundedIcon />
+                  <HoverNavbarStled>
+                    <PersonIcon />
+                  </HoverNavbarStled>
                 </Avatar>
               </IconButton>
             </Tooltip>
@@ -129,9 +153,7 @@ function ResponsiveAppBar() {
               {settings.map(setting => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
                   <Button onClick={logout} variant="contained" size="small" color="secondary">
-                    <Typography variant="body2" textAlign="center">
-                      {setting}
-                    </Typography>
+                    {setting}
                   </Button>
                 </MenuItem>
               ))}

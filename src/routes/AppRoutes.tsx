@@ -15,9 +15,9 @@ const AppRoutes: React.FC = () => {
         <Route path="/" element={<LoginLayout component={Welcome} />} />
         <Route path="/login" element={<LoginLayout component={Login} />} />
         <Route path="/register" element={<LoginLayout component={Register} />} />
-        <Route path="/home" element={<DefaultLayout component={Home} />} />
-        <Route path="/errands/:id" element={<DefaultLayout component={AddErrands} />} />
-        <Route path="/errands" element={<DefaultLayout component={AddErrands} />} />
+        <Route path="/home/:id" element={<DefaultLayout component={Home} />} />
+        <Route path="/add-errands/:id" element={<DefaultLayout component={AddErrands} />} />
+        <Route path="/edit-errands/:id" element={<DefaultLayout component={AddErrands} />} />
       </Routes>
     </BrowserRouter>
   );

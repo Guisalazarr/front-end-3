@@ -1,4 +1,3 @@
-
 import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 import { RootState } from '../index';
 import ErrandsType from '../../types/ErrandsType';
@@ -15,9 +14,11 @@ const errandsSlice = createSlice({
   reducers: {
     addErrands: adapter.addOne,
     updateErrands: adapter.updateOne,
-    removeErrands: adapter.removeOne
+    removeErrands: adapter.removeOne,
+    setAllErrands: adapter.setAll,
+    removeAllErrands: adapter.removeAll
   }
 });
 
-export const { addErrands, removeErrands, updateErrands } = errandsSlice.actions;
+export const { removeErrands, addErrands, updateErrands, setAllErrands, removeAllErrands } = errandsSlice.actions;
 export default errandsSlice.reducer;
