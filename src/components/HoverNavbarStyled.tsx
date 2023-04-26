@@ -1,9 +1,11 @@
 import styled from '@emotion/styled';
 
+const color = 'white';
+
 const HoverNavbarStled = styled.div`
   color: black;
   &:hover {
-    color: 'white';
+    color: ${color};
   }
 `;
 
