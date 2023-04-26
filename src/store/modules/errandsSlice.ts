@@ -9,7 +9,7 @@ const adapter = createEntityAdapter<ErrandsType>({
 export const { selectAll, selectById, selectTotal } = adapter.getSelectors((state: RootState) => state.errands);
 
 const errandsSlice = createSlice({
-  name: 'contacts',
+  name: 'errands',
   initialState: adapter.getInitialState(),
   reducers: {
     addErrands: adapter.addOne,
