@@ -8,7 +8,7 @@ const adapter = createEntityAdapter<RegisterType>({
   selectId: item => item.email
 });
 
-export const { selectAll, selectById, selectTotal } = adapter.getSelectors((state: RootState) => state.register);
+export const { selectAll: selectAllRegister, selectById, selectTotal } = adapter.getSelectors((state: RootState) => state.register);
 
 const registerSlice = createSlice({
   name: 'register',

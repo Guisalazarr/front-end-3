@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const color = 'white';
+const color = '#c4cbb7';
 
 const HoverNavbarStled = styled.div`
   color: black;

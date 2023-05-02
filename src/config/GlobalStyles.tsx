@@ -8,7 +8,7 @@ const GStyles: React.FC = () => {
         body: {
           padding: '0px',
           margin: '0px',
-          background: '#e7eed0'
+          background: '#044040'
         }
       }}
     />

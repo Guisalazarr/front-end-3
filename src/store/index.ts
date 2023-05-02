@@ -15,7 +15,7 @@ import rootReducer from './modules/rootReducer';
 
 
 const persistConfig = {
-  key: 'list-errands',
+  key: 'errands-react',
   storage
 };
 

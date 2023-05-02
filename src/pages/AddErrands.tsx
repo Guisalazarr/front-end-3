@@ -1,20 +1,12 @@
-import { Alert, Button, Grid, Paper, Snackbar, TextField } from '@mui/material';
+import { Button, Grid, Paper, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import generateId from '../utils/generateId';
 import TitlePage from '../components/TitlePage';
-
 import { addErrands, updateErrands, selectById } from '../store/modules/errandsSlice';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import AlertFeedback from '../components/AlertFeedback';
-
-const alignCenter = {
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginTop: '2rem'
-};
+import { clearAlertSlice, createAlertSlice } from '../store/modules/alertslice';
 
 const AddErrands: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -33,22 +25,15 @@ const AddErrands: React.FC = () => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(false);
 
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
-  const [msg, setMsg] = useState<string>('');
-  const [feedBack, setFeedback] = useState<'success' | 'error'>('success');
-
   useEffect(() => {
     if (!userLoggedRedux.email) {
-      if (id) {
-        setIsEdit(true);
-      }
-      setFeedback('error');
-      setMsg('Nenhum usuário logado!');
-      setOpenAlert(true);
+      dispatch(createAlertSlice({ open: true, msg: 'Nenhum usuário logado!', feedback: 'error' }));
 
       setTimeout(() => {
         navigate('/login');
       }, 1000);
+    } else {
+      clearAlert();
     }
   }, [userLoggedRedux]);
 
@@ -98,10 +83,7 @@ const AddErrands: React.FC = () => {
     if (id) {
       dispatch(updateErrands({ id, changes: { title, description } }));
       handleClear();
-      setFeedback('success');
-      setMsg('Recado editado com sucesso!');
-      setOpenAlert(true);
-
+      dispatch(createAlertSlice({ open: true, msg: 'Recado editado com sucesso!', feedback: 'success' }));
       setIsEdit(false);
     }
   };
@@ -111,80 +93,68 @@ const AddErrands: React.FC = () => {
       handleEdit();
     } else {
       dispatch(addErrands({ id: generateId(), title, description }));
-
-      setFeedback('success');
-      setMsg('Recado cadastrado com sucesso!');
-      setOpenAlert(true);
+      dispatch(createAlertSlice({ open: true, msg: 'Recado cadastrado com sucesso!', feedback: 'success' }));
     }
+    handleClear();
     setTimeout(() => {
-      navigate(`/home/${userLoggedRedux.email}`);
+      navigate('/home');
     }, 1000);
+  };
+
+  const clearAlert = () => {
+    dispatch(clearAlertSlice());
   };
 
   return (
     <>
-      <Grid container spacing={4} sx={{ ...alignCenter }}>
+      <Grid container spacing={1}>
         <TitlePage title={isEdit ? 'Edite o recado' : 'Cadastre um novo recado'} />
 
-        <Paper
-          sx={{
-            minWidth: '500px',
-            padding: '1rem',
-            mt: '20px'
-          }}
-        >
-          <Grid item xs={12}>
-            <TextField
-              sx={{ my: '10px' }}
-              value={title}
-              error={titleError}
-              helperText={titleError ? 'Digite um título válido, no mínimo 3 caracteres.' : ''}
-              onChange={event => setTitle(event.target.value)}
-              fullWidth
-              id="title"
-              label="Digite um título"
-              variant="outlined"
-              color="secondary"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              sx={{ my: '10px' }}
-              value={description}
-              error={descriptionError}
-              helperText={descriptionError ? 'Digite uma descrição válida, no mínimo 5 caracteres.' : ''}
-              onChange={event => setDescription(event.target.value)}
-              fullWidth
-              id="description"
-              label="Digite uma descrição"
-              variant="outlined"
-              color="secondary"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Button
-              onClick={handleAdd}
-              disabled={titleError || descriptionError || !valid}
-              fullWidth
-              variant="contained"
-              sx={{ height: '50px', my: '10px' }}
-            >
-              {isEdit ? 'Editar' : 'Cadastrar'}
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
-            <Button
-              fullWidth
-              onClick={handleClear}
-              color="secondary"
-              variant="outlined"
-              sx={{ height: '50px', my: '10px' }}
-            >
-              Limpar
-            </Button>
-          </Grid>
-        </Paper>
-        <AlertFeedback open={openAlert} close={() => setOpenAlert(false)} feedback={feedBack} msg={msg} />
+        <Grid item xs={12}>
+          <TextField
+            sx={{ my: '10px' }}
+            value={title}
+            error={titleError}
+            helperText={titleError ? 'Digite um título válido, no mínimo 3 caracteres.' : ''}
+            onChange={event => setTitle(event.target.value)}
+            fullWidth
+            id="title"
+            label="Digite um título"
+            variant="outlined"
+            color="secondary"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            sx={{ my: '10px' }}
+            value={description}
+            error={descriptionError}
+            helperText={descriptionError ? 'Digite uma descrição válida, no mínimo 5 caracteres.' : ''}
+            onChange={event => setDescription(event.target.value)}
+            fullWidth
+            id="description"
+            label="Digite uma descrição"
+            variant="outlined"
+            color="secondary"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Button
+            onClick={handleAdd}
+            disabled={titleError || descriptionError || !valid}
+            fullWidth
+            variant="contained"
+            sx={{ height: '50px' }}
+          >
+            {isEdit ? 'Editar' : 'Cadastrar'}
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <Button fullWidth onClick={handleClear} color="secondary" variant="contained" sx={{ height: '50px' }}>
+            Limpar
+          </Button>
+        </Grid>
+        <AlertFeedback close={clearAlert} />
       </Grid>
     </>
   );

@@ -6,32 +6,46 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-import { Alert, IconButton, Snackbar } from '@mui/material';
+import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ErrandsType from '../types/ErrandsType';
-import { useAppDispatch } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { useNavigate } from 'react-router-dom';
 import DialogConfirm from './DaialogConfirm';
-import { removeErrands } from '../store/modules/errandsSlice';
+import { removeErrands, selectAll } from '../store/modules/errandsSlice';
+import { selectAllRegister, updateRegister } from '../store/modules/registerSlice';
+import { clearAlertSlice, createAlertSlice } from '../store/modules/alertslice';
+import AlertFeedback from './AlertFeedback';
+import TitlePage from './TitlePage';
+import BoxGrid from './BoxGrid';
 
-interface ListErrandsProps {
-  data: ErrandsType[];
-}
-
-const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
+const ListErrands: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [dataLocal, setDataLocal] = useState<ErrandsType[]>([]);
+
+  const errandsRedux = useAppSelector(selectAll);
+  const registerRedux = useAppSelector(selectAllRegister);
+  const userLoggedRedux = useAppSelector(state => state.userLogged);
+
+  const findid = registerRedux.find(item => {
+    return item.email === userLoggedRedux.email;
+  });
+
   const [idDelete, setIdDelete] = useState<number>(0);
 
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [dialogItem, setdialogItem] = useState<ErrandsType>();
 
   useEffect(() => {
-    setDataLocal([...data]);
-  }, [data]);
+    const findid = registerRedux.find(item => {
+      return item.email === userLoggedRedux.email;
+    });
+    const id = findid?.email;
+    if (id) {
+      dispatch(updateRegister({ id, changes: { errands: errandsRedux } }));
+    }
+  }, [errandsRedux]);
 
   const confirmDelete = (itemDelete: ErrandsType) => {
     setIdDelete(itemDelete.id);
@@ -46,15 +60,19 @@ const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
   const handleDelete = () => {
     dispatch(removeErrands(idDelete));
     setOpenDialog(false);
-    setOpenAlert(true);
+    dispatch(createAlertSlice({ open: true, msg: 'Recado deletado com sucesso!', feedback: 'success' }));
+  };
+
+  const clearAlert = () => {
+    dispatch(clearAlertSlice());
   };
 
   const listMemo = useMemo(() => {
-    return dataLocal.map((item, index) => {
+    return findid?.errands.map((item, index) => {
       return (
         <React.Fragment key={item.id}>
           <ListItem
-            sx={{ maxWidth: '100%', bgcolor: 'background.paper', padding: '1rem' }}
+            sx={{ maxWidth: '100%', padding: '1rem', borderRadius: '5px' }}
             disableGutters
             secondaryAction={
               <>
@@ -64,17 +82,17 @@ const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
                   sx={{ marginRight: '10px' }}
                   onClick={() => handleEdit(item)}
                 >
-                  <EditIcon />
+                  <EditIcon color="secondary" />
                 </IconButton>
 
                 <IconButton aria-label="comment" onClick={() => confirmDelete(item)}>
-                  <DeleteIcon />
+                  <DeleteIcon color="secondary" />
                 </IconButton>
               </>
             }
           >
             <ListItemAvatar sx={{ display: 'inline' }}>
-              <Avatar>{index + 1}</Avatar>
+              <Avatar sx={{ bgcolor: '#D92525' }}>{index + 1}</Avatar>
             </ListItemAvatar>
             <ListItemText
               primary={
@@ -89,21 +107,13 @@ const ListErrands: React.FC<ListErrandsProps> = ({ data }) => {
         </React.Fragment>
       );
     });
-  }, [dataLocal]);
+  }, [findid?.errands]);
 
   return (
     <>
-      <List>{dataLocal.length ? listMemo : <Typography variant="body1">Nenhum recado cadastrado.</Typography>}</List>
+      <List>{errandsRedux.length ? listMemo : <Typography variant="body1">Nenhum recado cadastrado.</Typography>}</List>
 
-      <Snackbar
-        open={openAlert}
-        onClose={() => setOpenAlert(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert severity="success" variant="filled">
-          Recado excluído com sucesso!
-        </Alert>
-      </Snackbar>
+      <AlertFeedback close={() => clearAlert} />
 
       <DialogConfirm
         actionConfirm={handleDelete}

@@ -1,20 +1,22 @@
 import { Alert, Snackbar } from '@mui/material';
 import React from 'react';
+import { useAppSelector } from '../store/hooks';
 
-interface AlertProps {
-  open: boolean;
+interface AlertFeedbackProps {
   close: () => void;
-  msg: string;
-  feedback: 'error' | 'success';
 }
 
-const AlertFeedback: React.FC<AlertProps> = ({ open, close, msg, feedback }) => {
+const AlertFeedback: React.FC<AlertFeedbackProps> = ({ close }) => {
+  const alertRedux = useAppSelector(state => state.alertSlice);
+
   return (
-    <Snackbar open={open} onClose={close} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-      <Alert severity={feedback} variant="filled">
-        {msg}
-      </Alert>
-    </Snackbar>
+    <>
+      <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={alertRedux.open} onClose={close}>
+        <Alert variant="filled" severity={alertRedux.feedback}>
+          {alertRedux.msg}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 

@@ -95,7 +95,7 @@ function ResponsiveAppBar() {
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {routes.map(page => (
-              <Button key={page.url} onClick={() => handleCloseNavMenu(`${page.url}/${userLoggedRedux.email}`)}>
+              <Button key={page.url} onClick={() => handleCloseNavMenu(`${page.url}`)} sx={{ marginRight: '20px' }}>
                 <HoverNavbarStled>
                   <Typography
                     variant="h5"
@@ -126,11 +126,9 @@ function ResponsiveAppBar() {
           </Typography>
           <Box sx={{ flexGrow: 0, marginRight: '10px' }}>
             <Tooltip title="Menu">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar variant="rounded" sx={{ bgcolor: 'secondary' }}>
-                  <HoverNavbarStled>
-                    <PersonIcon />
-                  </HoverNavbarStled>
+              <IconButton onClick={handleOpenUserMenu}>
+                <Avatar variant="rounded">
+                  <PersonIcon sx={{ color: 'black' }} />
                 </Avatar>
               </IconButton>
             </Tooltip>

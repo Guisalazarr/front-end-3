@@ -40,7 +40,7 @@ const DialogConfirm: React.FC<DialogConfirmProps> = ({
         </Grid>
 
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText id="alert-dialog-description" sx={{ textAlign: 'center' }}>
             <>
               <Grid item xs={12}>
                 <Typography variant="h4">{subtile}</Typography>
@@ -54,12 +54,12 @@ const DialogConfirm: React.FC<DialogConfirmProps> = ({
 
         <DialogActions>
           <Grid item xs={6}>
-            <Button variant="outlined" onClick={actionCancel} color="secondary">
+            <Button variant="contained" onClick={actionCancel} color="secondary" fullWidth>
               Cancelar
             </Button>
           </Grid>
           <Grid item xs={6}>
-            <Button variant="contained" onClick={actionConfirm} autoFocus>
+            <Button variant="contained" onClick={actionConfirm} autoFocus fullWidth>
               Confirmar
             </Button>
           </Grid>

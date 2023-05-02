@@ -4,8 +4,7 @@ const GridContainerLogin = styled(Grid)({
   height: '100vh',
   justifyContent: 'center',
   alignItems: 'center',
-  background: 'url("/images/background1.jpg") center/ cover no-repeat',
-  color: 'white'
+  background: 'url("/images/background.jpg") center/ cover no-repeat'
 });
 
 export default GridContainerLogin;

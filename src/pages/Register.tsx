@@ -1,28 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Grid, TextField } from '@mui/material';
+import { Button, Grid, Link, TextField } from '@mui/material';
 import TitlePage from '../components/TitlePage';
-import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import { useNavigate } from 'react-router-dom';
-import { addRegister, selectAll } from '../store/modules/registerSlice';
+import { addRegister, selectAllRegister } from '../store/modules/registerSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import AlertFeedback from '../components/AlertFeedback';
+import { clearAlertSlice, createAlertSlice } from '../store/modules/alertslice';
 
 const Index: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const registerRedux = useAppSelector(selectAll);
+  const registerRedux = useAppSelector(selectAllRegister);
 
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [repeatPassword, setRepeatPassword] = useState<string>('');
 
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
-  const [msg, setMsg] = useState<string>('');
-  const [feedBack, setFeedback] = useState<'success' | 'error'>('success');
-
   const [valid, setValid] = useState<boolean>(false);
+
+  useEffect(() => {
+    clearAlert();
+  }, []);
 
   useEffect(() => {
     if (name.length < 3 || email.length < 4 || password.length < 4 || repeatPassword.length < 4) {
@@ -47,31 +47,29 @@ const Index: React.FC = () => {
     if (!findUser) {
       if (password === repeatPassword) {
         dispatch(addRegister({ name, email, password, errands: [] }));
-        setOpenAlert(true);
-        setMsg('Usuário cadastrado com sucesso!');
-        setFeedback('success');
+        dispatch(createAlertSlice({ open: true, msg: 'Usuário cadastrado com sucesso!', feedback: 'success' }));
 
         setTimeout(() => {
           navigate('/login');
         }, 1000);
       } else {
-        setOpenAlert(true);
-        setFeedback('error');
-        setMsg('Senhas divergentes!');
+        dispatch(createAlertSlice({ open: true, msg: 'Senhas divergentes!', feedback: 'error' }));
       }
     } else {
-      handleClear();
-      setOpenAlert(true);
-      setFeedback('error');
-      setMsg('Usuário já cadastrado');
+      dispatch(createAlertSlice({ open: true, msg: 'Usuário já cadastrado!', feedback: 'error' }));
     }
+    handleClear();
+  };
+
+  const clearAlert = () => {
+    dispatch(clearAlertSlice());
   };
 
   return (
     <>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <TitlePage title={'Criar Conta'}></TitlePage>
+          <TitlePage title={'CRIAR CONTA'}></TitlePage>
         </Grid>
         <Grid item xs={12}>
           <TextField
@@ -81,6 +79,7 @@ const Index: React.FC = () => {
             label="Nome"
             variant="outlined"
             color="secondary"
+            value={name}
             onChange={event => setName(event.target.value)}
           />
         </Grid>
@@ -92,6 +91,7 @@ const Index: React.FC = () => {
             label="E-mail"
             variant="outlined"
             color="secondary"
+            value={email}
             onChange={event => setEmail(event.target.value)}
           />
         </Grid>
@@ -103,6 +103,7 @@ const Index: React.FC = () => {
             label="Senha"
             variant="outlined"
             color="secondary"
+            value={password}
             onChange={event => setPassword(event.target.value)}
           />
         </Grid>
@@ -114,20 +115,21 @@ const Index: React.FC = () => {
             label="Repita a senha"
             variant="outlined"
             color="secondary"
+            value={repeatPassword}
             onChange={event => setRepeatPassword(event.target.value)}
           />
         </Grid>
-        <Grid item xs={6}>
-          <Button variant="outlined" color="secondary" size="large" onClick={() => navigate('/login')}>
-            <KeyboardReturnIcon sx={{ marginRight: '5px' }} /> Login
-          </Button>
-        </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12}>
           <Button variant="contained" color="primary" size="large" onClick={handleAdd} disabled={valid}>
             Cadastre-se
           </Button>
+          <Grid item xs={12} sx={{ marginTop: '10px' }}>
+            <Link color="secondary" style={{ cursor: 'pointer' }} variant="body1" onClick={() => navigate('/login')}>
+              Já tenho conta!
+            </Link>
+          </Grid>
         </Grid>
-        <AlertFeedback open={openAlert} close={() => setOpenAlert(false)} msg={msg} feedback={feedBack} />
+        <AlertFeedback close={clearAlert} />
       </Grid>
     </>
   );

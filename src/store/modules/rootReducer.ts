@@ -1,13 +1,19 @@
 
 import { combineReducers } from '@reduxjs/toolkit';
 
-import errands from './errandsSlice';
-import register from './registerSlice';
-import userLogged from './userLoggedSlice';
+import errandsRedux from './errandsSlice';
+import registerRedux from './registerSlice';
+import userLoggedRedux from './userLoggedSlice';
+import alertReducer from './alertslice';
+
+
+
 
 
 export default combineReducers({
-  errands,
-  register,
-  userLogged,
+  errands: errandsRedux,
+  register: registerRedux,
+  userLogged: userLoggedRedux,
+  alertSlice: alertReducer
+
 });
