@@ -17,8 +17,6 @@ import { removeErrands, selectAll } from '../store/modules/errandsSlice';
 import { selectAllRegister, updateRegister } from '../store/modules/registerSlice';
 import { clearAlertSlice, createAlertSlice } from '../store/modules/alertslice';
 import AlertFeedback from './AlertFeedback';
-import TitlePage from './TitlePage';
-import BoxGrid from './BoxGrid';
 
 const ListErrands: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -86,13 +84,13 @@ const ListErrands: React.FC = () => {
                 </IconButton>
 
                 <IconButton aria-label="comment" onClick={() => confirmDelete(item)}>
-                  <DeleteIcon color="secondary" />
+                  <DeleteIcon color="primary" />
                 </IconButton>
               </>
             }
           >
             <ListItemAvatar sx={{ display: 'inline' }}>
-              <Avatar sx={{ bgcolor: '#D92525' }}>{index + 1}</Avatar>
+              <Avatar sx={{ bgcolor: '#044040', color: '#c4cbb7' }}>{index + 1}</Avatar>
             </ListItemAvatar>
             <ListItemText
               primary={

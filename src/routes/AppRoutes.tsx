@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
-import DefaultLayout from '../config/Layout/DefaultLayout';
+import DefaultLayout from '../config/Layout/DefaultLayout/DefaultLayout';
 import LoginLayout from '../config/Layout/LoginLayout';
 import Welcome from '../pages/Welcome';
 import AddErrands from '../pages/AddErrands';

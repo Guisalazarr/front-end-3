@@ -12,12 +12,12 @@ const Index: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const registerRedux = useAppSelector(selectAllRegister);
+  const validEmail = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [repeatPassword, setRepeatPassword] = useState<string>('');
-
   const [valid, setValid] = useState<boolean>(false);
 
   useEffect(() => {
@@ -44,19 +44,23 @@ const Index: React.FC = () => {
       return item.email === email;
     });
 
-    if (!findUser) {
-      if (password === repeatPassword) {
-        dispatch(addRegister({ name, email, password, errands: [] }));
-        dispatch(createAlertSlice({ open: true, msg: 'Usuário cadastrado com sucesso!', feedback: 'success' }));
-
-        setTimeout(() => {
-          navigate('/login');
-        }, 1000);
-      } else {
-        dispatch(createAlertSlice({ open: true, msg: 'Senhas divergentes!', feedback: 'error' }));
-      }
+    if (!email || !email.match(validEmail)) {
+      dispatch(createAlertSlice({ open: true, msg: 'Informa um e-mail com formato válido', feedback: 'error' }));
     } else {
-      dispatch(createAlertSlice({ open: true, msg: 'Usuário já cadastrado!', feedback: 'error' }));
+      if (!findUser) {
+        if (password === repeatPassword) {
+          dispatch(addRegister({ name, email, password, errands: [] }));
+          dispatch(createAlertSlice({ open: true, msg: 'Usuário cadastrado com sucesso!', feedback: 'success' }));
+
+          setTimeout(() => {
+            navigate('/login');
+          }, 1000);
+        } else {
+          dispatch(createAlertSlice({ open: true, msg: 'Senhas divergentes!', feedback: 'error' }));
+        }
+      } else {
+        dispatch(createAlertSlice({ open: true, msg: 'Usuário já cadastrado!', feedback: 'error' }));
+      }
     }
     handleClear();
   };

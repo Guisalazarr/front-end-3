@@ -1,20 +1,12 @@
-import { Container, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import React from 'react';
-import ResponsiveAppBar from '../../components/ResponsiveAppBar';
-import BoxGrid from '../../components/BoxGrid';
+import ResponsiveAppBar from '../../../components/ResponsiveAppBar';
+import BoxGrid from '../../../components/BoxGrid';
+import ContainerLayout from './components/ContainerLayout';
 
 interface DefaultLayoutProps {
   component: React.FC;
 }
-
-const alignCenter = {
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginTop: '2rem',
-  marginBottom: '20px'
-};
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ component: Component }) => {
   return (
@@ -24,11 +16,11 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ component: Component }) =
       </Grid>
 
       <Grid item xs={12}>
-        <Container sx={{ ...alignCenter }}>
+        <ContainerLayout>
           <BoxGrid>
             <Component />
           </BoxGrid>
-        </Container>
+        </ContainerLayout>
       </Grid>
     </Grid>
   );
