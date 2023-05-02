@@ -114,8 +114,10 @@ const Login: React.FC = () => {
         </Button>
       </Grid>
       <Grid item xs={12}>
-        <Link color="secondary" style={{ cursor: 'pointer' }} variant="body1" onClick={() => navigate('/register')}>
-          <Typography>Cadastre-se</Typography>
+        <Link color="secondary" style={{ cursor: 'pointer' }} onClick={() => navigate('/register')}>
+          <Typography variant="body2" color="black">
+            CRIAR CONTA
+          </Typography>
         </Link>
       </Grid>
       <AlertFeedback close={clearAlert} />

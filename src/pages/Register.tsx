@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Grid, Link, TextField } from '@mui/material';
+import { Button, Grid, Link, TextField, Typography } from '@mui/material';
 import TitlePage from '../components/TitlePage';
 import { useNavigate } from 'react-router-dom';
 import { addRegister, selectAllRegister } from '../store/modules/registerSlice';
@@ -45,7 +45,7 @@ const Index: React.FC = () => {
     });
 
     if (!email || !email.match(validEmail)) {
-      dispatch(createAlertSlice({ open: true, msg: 'Informa um e-mail com formato válido', feedback: 'error' }));
+      dispatch(createAlertSlice({ open: true, msg: 'Formato do e-mail inválido!', feedback: 'error' }));
     } else {
       if (!findUser) {
         if (password === repeatPassword) {
@@ -128,8 +128,10 @@ const Index: React.FC = () => {
             Cadastre-se
           </Button>
           <Grid item xs={12} sx={{ marginTop: '10px' }}>
-            <Link color="secondary" style={{ cursor: 'pointer' }} variant="body1" onClick={() => navigate('/login')}>
-              Já tenho conta!
+            <Link color="secondary" style={{ cursor: 'pointer' }} onClick={() => navigate('/login')}>
+              <Typography variant="body2" color="black">
+                JÁ TENHO CONTA
+              </Typography>
             </Link>
           </Grid>
         </Grid>

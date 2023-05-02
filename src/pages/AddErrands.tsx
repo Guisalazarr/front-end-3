@@ -82,19 +82,19 @@ const AddErrands: React.FC = () => {
   const handleEdit = () => {
     if (id) {
       dispatch(updateErrands({ id, changes: { title, description } }));
-      handleClear();
       dispatch(createAlertSlice({ open: true, msg: 'Recado editado com sucesso!', feedback: 'success' }));
-      setIsEdit(false);
+
+      setTimeout(() => {
+        navigate('/home');
+        setIsEdit(false);
+      }, 1000);
     }
   };
 
   const handleAdd = () => {
-    if (isEdit) {
-      handleEdit();
-    } else {
-      dispatch(addErrands({ id: generateId(), title, description }));
-      dispatch(createAlertSlice({ open: true, msg: 'Recado cadastrado com sucesso!', feedback: 'success' }));
-    }
+    dispatch(addErrands({ id: generateId(), title, description }));
+    dispatch(createAlertSlice({ open: true, msg: 'Recado cadastrado com sucesso!', feedback: 'success' }));
+
     handleClear();
     setTimeout(() => {
       navigate('/home');
@@ -140,7 +140,7 @@ const AddErrands: React.FC = () => {
         </Grid>
         <Grid item xs={12}>
           <Button
-            onClick={handleAdd}
+            onClick={isEdit ? handleEdit : handleAdd}
             disabled={titleError || descriptionError || !valid}
             fullWidth
             variant="contained"
