@@ -9,7 +9,7 @@ const defaultTheme = createTheme({
       main: '#044040',
 
     },
-  },
+  }
 });
 
 export default defaultTheme;

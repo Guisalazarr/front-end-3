@@ -1,6 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-
 interface UserLoggedState {
   name: string;
   email: string;

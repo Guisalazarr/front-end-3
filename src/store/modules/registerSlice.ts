@@ -1,7 +1,5 @@
-
 import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 import { RootState } from '../index';
-
 import RegisterType from '../../types/RegisterType';
 
 const adapter = createEntityAdapter<RegisterType>({

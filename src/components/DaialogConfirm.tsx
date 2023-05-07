@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -37,7 +36,7 @@ const DialogConfirm: React.FC<DialogConfirmProps> = ({
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <Box sx={{ bgcolor: '#c4cbb7' }}>
+        <Box bgcolor="#c4cbb7">
           <Grid item xs={12}>
             <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
           </Grid>

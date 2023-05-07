@@ -116,7 +116,7 @@ const Login: React.FC = () => {
       <Grid item xs={12}>
         <Link color="secondary" style={{ cursor: 'pointer' }} onClick={() => navigate('/register')}>
           <Typography variant="body2" color="black">
-            CRIAR CONTA
+            CADASTRE-SE
           </Typography>
         </Link>
       </Grid>

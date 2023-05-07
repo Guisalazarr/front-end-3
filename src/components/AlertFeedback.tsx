@@ -1,7 +1,6 @@
 import { Alert, Snackbar } from '@mui/material';
 import React from 'react';
 import { useAppSelector } from '../store/hooks';
-
 interface AlertFeedbackProps {
   close: () => void;
 }

@@ -17,7 +17,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ component: Component }) =
 
       <Grid item xs={12}>
         <ContainerLayout>
-          <BoxGrid>
+          <BoxGrid item xs={12}>
             <Component />
           </BoxGrid>
         </ContainerLayout>
