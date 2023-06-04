@@ -6,7 +6,7 @@ const BoxGrid = styled(Grid)({
   padding: '15px',
   textAlign: 'center',
   boxShadow: '10px 10px 10px 10px black',
-  background: '#c4cbb7'
+  background: '#e4dfd0'
 });
 
 export default BoxGrid;

@@ -25,7 +25,7 @@ const DialogConfirm: React.FC<DialogConfirmProps> = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <Box bgcolor="#c4cbb7" sx={{ textAlign: 'center' }}>
+      <Box bgcolor="#e4dfd0" sx={{ textAlign: 'center' }}>
         <DialogTitle color="black" id="alert-dialog-title">
           {title}
         </DialogTitle>
